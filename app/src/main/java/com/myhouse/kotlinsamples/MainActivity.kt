@@ -7,6 +7,7 @@ import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.myhouse.kotlinsamples.network.CharacterResult
@@ -52,6 +53,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupCharactersRecyclerView(results: List<CharacterResult>) {
         val layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         val charactersRecyclerView = findViewById<RecyclerView>(R.id.characters_recycler_view)
+        charactersRecyclerView.addItemDecoration(DividerItemDecoration(this, layoutManager.orientation))
         val charactersAdapter = CharactersAdapter(results, this)
         charactersRecyclerView.layoutManager = layoutManager
         charactersRecyclerView.adapter = charactersAdapter
