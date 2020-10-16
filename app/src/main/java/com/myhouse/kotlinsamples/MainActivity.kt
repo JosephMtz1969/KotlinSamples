@@ -7,6 +7,9 @@ import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.myhouse.kotlinsamples.network.CharacterResult
 import com.myhouse.kotlinsamples.network.Characters
 import com.myhouse.kotlinsamples.network.RickMortyCharacterEndpoints
 import com.myhouse.kotlinsamples.network.ServiceBuilder
@@ -46,6 +49,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun setupCharactersRecyclerView(results: List<CharacterResult>) {
+        val layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        val charactersRecyclerView = findViewById<RecyclerView>(R.id.characters_recycler_view)
+        val charactersAdapter = CharactersAdapter(results, this)
+        charactersRecyclerView.layoutManager = layoutManager
+        charactersRecyclerView.adapter = charactersAdapter
+    }
+
     private fun goGetTheCharacters() {
         val request = ServiceBuilder.buildService(RickMortyCharacterEndpoints::class.java)
 
@@ -57,6 +68,7 @@ class MainActivity : AppCompatActivity() {
                     response.body()?.let{ characters ->
                         characters.results.forEach { result ->
                             Log.d(TAG, "\tName ${result.name}, Species ${result.species}, Status ${result.status}")
+                            setupCharactersRecyclerView(characters.results)
                         }
                     } ?: kotlin.run {
                         Log.e(TAG, "goGetTheCharacters: we got an empty response")
