@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
     private fun goGetTheCharacters() {
         val request = ServiceBuilder.buildService(RickMortyCharacterEndpoints::class.java)
 
-        val call = request.getCharacters("my_key")
+        val call = request.getCharacters()
 
         call.enqueue(object : Callback<Characters>{
             override fun onResponse(call: Call<Characters>, response: Response<Characters>) {
