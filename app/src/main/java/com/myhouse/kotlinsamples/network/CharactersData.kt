@@ -18,7 +18,13 @@ data class CharacterResult(
     val status: String,
     val species: String,
     val type: String,
+    val location: CharacterLocation,
     val image: String,
     val url: String,
     val created: String
+)
+
+data class CharacterLocation(
+    val name: String,
+    val url: String
 )
