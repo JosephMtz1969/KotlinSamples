@@ -32,6 +32,8 @@ class MainActivity : AppCompatActivity() {
                     .setAction("Action", null).show()
             goGetTheCharacters()
         }
+
+        goGetTheCharacters()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
