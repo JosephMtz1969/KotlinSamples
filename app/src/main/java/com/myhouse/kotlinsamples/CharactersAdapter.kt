@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.myhouse.kotlinsamples.network.CharacterResult
@@ -20,6 +21,12 @@ class CharactersAdapter(private val characters: List<CharacterResult>, private v
         holder.nameTextView.text = characters[position].name
         holder.speciesTextView.text = characters[position].species
         holder.statusTextView.text = characters[position].status
+        holder.itemView.setOnClickListener {
+            val builder = AlertDialog.Builder(context)
+            builder.setMessage("Location - ${characters[position].location.name}")
+            builder.setPositiveButton(context.getText(android.R.string.ok), null)
+            builder.show()
+        }
     }
 
     override fun getItemCount(): Int {
