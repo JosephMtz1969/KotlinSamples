@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity() {
         compositeDisposable.add(
             observable.delay(1, TimeUnit.SECONDS)
                 .subscribeOn(Schedulers.io())
-                .subscribe({response -> handleResponse(response)}, {failure -> handleFailure(failure)})
+                .subscribe({response -> handleResponse(response)}, {failure -> handleError(failure)})
         )
     }
 
@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun handleFailure(failure: Throwable) {
-        Log.e(TAG, "Request to get characters failed, error - ${failure.message}")
+    private fun handleError(failure: Throwable) {
+        Log.e(TAG, "Error during the processing of the request, error - ${failure.message}")
     }
 }
