@@ -8,13 +8,10 @@ import android.view.MenuItem
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.myhouse.kotlinsamples.network.CharacterResult
-import com.myhouse.kotlinsamples.network.Characters
-import com.myhouse.kotlinsamples.network.RickMortyCharacterEndpoints
-import com.myhouse.kotlinsamples.network.ServiceBuilder
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.myhouse.kotlinsamples.network.*
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
@@ -57,29 +54,28 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun goGetTheCharacters() {
-        val request = ServiceBuilder.buildService(RickMortyCharacterEndpoints::class.java)
+        val serviceClient = ServiceClient()
+        val compositeDisposable = CompositeDisposable()
+        val observable = serviceClient.getCharacters()
 
-        val call = request.getCharacters()
+        compositeDisposable.add(
+            observable.delay(1, TimeUnit.SECONDS)
+                .subscribeOn(Schedulers.io())
+                .subscribe({response -> handleResponse(response)}, {failure -> handleFailure(failure)})
+        )
+    }
 
-        call.enqueue(object : Callback<Characters>{
-            override fun onResponse(call: Call<Characters>, response: Response<Characters>) {
-                if (response.isSuccessful) {
-                    response.body()?.let{ characters ->
-                        characters.results.forEach { result ->
-                            Log.d(TAG, "\tName ${result.name}, Species ${result.species}, Status ${result.status}")
-                            setupCharactersRecyclerView(characters.results)
-                        }
-                    } ?: kotlin.run {
-                        Log.e(TAG, "goGetTheCharacters: we got an empty response")
-                    }
-                } else {
-                   Log.e(TAG, "goGetTheCharacters: call was not successful")
-                }
-            }
+    private fun handleResponse(response: Characters) {
+        Log.d(TAG, "Got the list of characters")
+        response.results.forEach { result ->
+            Log.d(TAG, "\tName ${result.name}, Species ${result.species}, Status ${result.status}")
+        }
+        runOnUiThread {
+            setupCharactersRecyclerView(response.results)
+        }
+    }
 
-            override fun onFailure(call: Call<Characters>, t: Throwable) {
-                Log.e(TAG, "goGetTheCharacters: we got a failures, ${t.message}")
-            }
-        })
+    private fun handleFailure(failure: Throwable) {
+        Log.e(TAG, "Request to get characters failed, error - ${failure.message}")
     }
 }
